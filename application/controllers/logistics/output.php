@@ -35,13 +35,31 @@ class Output extends CI_Controller {
     }
     public function get()
     {
+        // exit(var_dump($this->input->get('search')));
         // var_dump($this->db->query('SELECT VERSION()')->result());
+        $search = $this->input->get('search');
         $registros = $this->db->query(
-            "SELECT output.*, ticket.name AS 'ticketName', l_out.name AS 'storageNameOut', l_in.name AS 'storageNameIn' FROM output 
+            "SELECT output.*, ticket.name AS 'ticketName', l_out.name AS 'storageNameOut', l_in.name AS 'storageNameIn' 
+            FROM output 
             LEFT JOIN ticket ON output.ticketid = ticket.id 
             LEFT JOIN location as l_out ON output.storageid_out = l_out.id 
-            LEFT JOIN location as l_in ON output.storageid_in = l_in.id"
+            LEFT JOIN location as l_in ON output.storageid_in = l_in.id 
+            WHERE ticket.name LIKE '%$search%' OR l_out.name LIKE '%$search%' OR l_in.name LIKE '%$search%'"
         )->result();
         exit(json_encode($registros));
+    }
+    public function create()
+    {
+        // exit(var_dump($this->input->post()));
+        
+        // params
+        $params = $this->input->post();
+        
+        // validate
+        // print_r($params);
+        // exit;
+        if(isset($params['detalles'])){
+            
+        }
     }
 }

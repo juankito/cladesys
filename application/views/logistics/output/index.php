@@ -16,41 +16,66 @@
                     </div>
                 </div>
                 <div class="portlet-body">
-                    <table class="table table-bordered table-hover" id="inputDataTable">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>TICKET</th>
-                                <th>ORIGEN</th>
-                                <th>DESTINO</th>
-                                <th>FECHA</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in lista">
-                                <td>{{item.id}} </td>
-                                <td>{{item.ticketName}} </td>
-                                <td>{{item.storageNameOut}} </td>
-                                <td>{{item.storageNameIn}} </td>
-                                <td>{{item.added_at}} </td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div id="locationDataTable_wrapper" class="dataTables_wrapper no-footer">
+                        <div class="row">
+                            <!--This section is disabled for not compatible-->
+                            <div class="col-md-12">
+                                <div class="dt-buttons"><a class="dt-button buttons-print btn purple-plum" tabindex="0" aria-controls="locationDataTable"
+                                        title="Imprimir"><span><i class="icon-printer"></i></span></a><a class="dt-button buttons-pdf buttons-html5 btn red-sunglo"
+                                        tabindex="0" aria-controls="locationDataTable" title="PDF"><span><i class="fa fa-file-pdf-o"></i></span></a>
+                                    <a class="dt-button buttons-excel buttons-html5 btn green-meadow" tabindex="0" aria-controls="locationDataTable" title="Excel"><span><i class="fa fa-file-excel-o"></i></span></a>
+                                    <a class="dt-button buttons-collection buttons-colvis btn grey-cascade" tabindex="0" aria-controls="locationDataTable"><span><i class="fa fa-th-list"></i></span></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12"></div>
+                            <div class="col-md-6 col-sm-12">
+                                <div id="locationDataTable_filter" class="dataTables_filter"><label>Buscar <input class="form-control input-sm input-small input-inline" placeholder="" aria-controls="locationDataTable" type="search" v-model="searchOutput" @change="get()"></label></div>
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-hover" id="inputDataTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>TICKET</th>
+                                    <th>ORIGEN</th>
+                                    <th>DESTINO</th>
+                                    <th>FECHA</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="item in lista">
+                                    <td>{{item.id}} </td>
+                                    <td>{{item.ticketName}} </td>
+                                    <td>{{item.storageNameOut}} </td>
+                                    <td>{{item.storageNameIn}} </td>
+                                    <td>{{item.added_at}} </td>
+                                    <td>
+                                        <router-link :to="'/details/' + item.id">
+                                            <button class="btn dark btn-outline">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </button>
+                                        </router-link>
+                                        <a @click="deleteOutput(item.id)">
+                                            <button class="btn btn-warning" title="Eliminar">
+                                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                            </button>
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>        
+        </div>
     </div>
 </template>
 <template id="output_create">
-    
+
     <div class="row">
-        
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-            <pre>{{$data}} </pre>
-        </div>
-        
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <div class="portlet light">
                 <div class="portlet-body form">
@@ -91,16 +116,16 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <label for="">Fecha</label>
-                                        <input type="date" v-model="output.date" class="form-control">
+                                        <input type="date" v-model="output.date" class="form-control" placeholder="YYYY-MM-DD">
                                     </div>
                                 </div>
                             </div>
                             <template>
                                 <h3 class="form-section">Detalles de Salida</h3>
                                 <div class="row">
-                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        
+                                    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                                         <a class="btn btn-primary" data-toggle="modal" href='#modal-id'>Agregar Detalle</a>
+                                        <hr>
                                         <div class="modal fade" id="modal-id">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
@@ -125,7 +150,6 @@
                                                             <label for="">Cantidad</label>
                                                             <input type="number" class="form-control" v-model="outputNew.quantity">
                                                         </div>
-                                                        
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
@@ -134,9 +158,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
-                                        
-                                        <table class="table table-condensed table-bordered table-hover">
+                                        <table class="table table-bordered table-hover" v-show="outputdetail.length != 0">
                                             <thead>
                                                 <tr>
                                                     <th>N°</th>
@@ -160,16 +182,14 @@
                                                 </tr>
                                             </tbody>
                                         </table>
-                                        
-                                        <table class="table table-bordered table-hover">
-                                            
-                                        </table>
-                                        
-                                     </div>
+                                        <button class="btn btn-primary" @click="registrar()">
+                                            <i class="fa fa-save"></i> Guardar Registro
+                                        </button>
+                                    </div>
                                 </div>
                             </template>
                         </div>
-                    </form>            
+                    </form>
                 </div>
             </div>
         </div>
@@ -196,16 +216,11 @@
                 <li><span>Registrar </span></li>
             </ul>
         </div>
-        <p>
-            <!-- use router-link component for navigation. -->
-            <!-- specify the link by passing the `to` prop. -->
-            <!-- `<router-link>` will be rendered as an `<a>` tag by default -->
+        <!--<p>
             <router-link to="/">/</router-link>
             <router-link to="/create">create</router-link>
             <router-link to="/bar">Go to Bar</router-link>
-        </p>
-        <!-- route outlet -->
-        <!-- component matched by the route will render here -->
+        </p>-->
         <router-view></router-view>
     </div>
     <!-- END CONTENT BODY -->
