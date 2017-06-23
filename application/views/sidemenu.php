@@ -101,6 +101,7 @@
                         <span class="arrow"></span>
                     </a href="javascript:;" class="nav-link nav-toggle">
                     <ul class="sub-menu">
+                        <li class="nav-item"><a href="<?= site_url('logistics/output'); ?>">Registro</a></li>
                       <li class="nav-item"><a href="#">Distribuciones</a></li>
                       <li class="nav-item"><a href="#">Kardex</a></li>
                     </ul>
