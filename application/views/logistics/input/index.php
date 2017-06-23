@@ -57,9 +57,13 @@
                                 <td><?= $i->date; ?></td>
                                 <td>S/. <?= $i->price ?></td>
                                 <td>
-                                <?php if($i->status == 1): ?>
+                                <?php if($i->status == 2): ?>
                                     <span class="badge badge-primary uppercase">
                                         Aceptado
+                                    </span>
+                                <?php elseif ($i->status == 1): ?>
+                                    <span class="badge badge-warning uppercase">
+                                        En espera
                                     </span>
                                 <?php else: ?>
                                     <span class="badge badge-danger uppercase">
@@ -105,11 +109,11 @@ function destroy(id){
 
     }).then(function () {
 
-        $.post("<?= site_url(); ?>"+'logistics/input/destroy/'+id, function(data){
+        $.post("<?= site_url(); ?>"+'logistics/input/cancel/'+id, function(data){
 
             redirect('logistics/input');
 
-            if (data == id) {
+            if (data == 1) {
                 swal({
                       title: '¡Atención!',
                       type: 'warning',

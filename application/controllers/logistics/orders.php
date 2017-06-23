@@ -33,6 +33,31 @@ class Orders extends CI_Controller {
 		return $this->load->view('logistics/orders/index', $data);
 	}
 
+	public function create(){
+		$select = array(
+			'productid' => 'product.id',
+			'detail'	=> 'product.detail',
+			'brand'		=> 'brand.name as brand',
+			'unitprice'	=> '(unit_price.pri_qua / unit_price.total_q)'
+			);
+
+		$from = array('table' => 'product');
+
+		$join = array(
+			'table1' 		=> 'brand',
+			'condition1'	=> 'brand.id =  product.brandid',
+			'table2'		=> 'unit_price',
+			'condition2'	=> 'unit_price.productid = product.id'
+			);
+		$where = array(
+			'product.flagstate' => 1,
+			'unit_price.locationid' => 1
+			);
+
+
+		
+	}
+
 }
 
 /* End of file orders.php */

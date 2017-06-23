@@ -38,7 +38,6 @@
         'type'      => 'number',
         'name'      => 'iquantity',
         'class'     => 'form-control',
-        'required'  => 'true',
         'min'       => '0',
         'step'      => '1',
         'id'        => 'iquantity'
@@ -48,7 +47,6 @@
         'type'      => 'number',
         'name'      => 'iunitprice',
         'class'     => 'form-control',
-        'required'  => 'true',
         'min'       => '0',
         'step'      => '0.01',
         'id'        => 'iunitprice'
@@ -180,20 +178,23 @@
                                         <thead>
                                             <th>Quitar</th>
                                             <th>Producto</th>
+                                            <th>Lote</th>
                                             <th>Cantidad</th>
                                             <th>Precio</th>
                                             <th>Sub Total</th>
                                         </thead>
-                                        <tfoot>
-                                            <th>TOTAL</th>
-                                            <th></th>
-                                            <th></th>
-                                            <th></th>
-                                            <th><h4 id="total">S/ 0.00</h4></th>  
-                                        </tfoot>
                                         <tbody>
                                             
                                         </tbody>
+                                        <tfoot>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th>TOTAL</th>
+                                            <th><h4 id="total">S/ 0.00</h4></th>  
+                                        </tfoot>
+                                        
                                     </table>
                                  </div>
                             </div>

@@ -38,7 +38,16 @@ class InputModel extends CI_Model {
 	public function insert($table, $data)
 	{
 		$this->db->insert($table, $data);
-		$resutl = $this->db->affected_rows();
+		$result = $this->db->affected_rows();
+		return $result;
+	}
+
+	public function update($table, $where, $data)
+	{
+		$this->db->where($where);
+		$this->db->update($table, $data);
+		$result = $this->db->affected_rows();
+
 		return $result;
 	}
 }

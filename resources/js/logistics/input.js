@@ -67,23 +67,34 @@ function addelement(){
     quantity    = $("#iquantity").val();
     price       = $("#iunitprice").val();
     expire      = $("#expiredate").val();
-    lot         = $("#inslot").val();
+    lot         = $("#inslot").val().toUpperCase();
 
-    alert('It works. id'+idproduct+' prod '+product+' quantity '+quantity+' price '+' expire '+expire+' lot '+lot);
+    quantity =  parseFloat(quantity);
+    price = parseFloat(price);
+    //alert('It works. id'+idproduct+' prod '+product+' quantity '+quantity+' price '+' expire '+expire+' lot '+lot);
 
     if (idproduct != "" && quantity != "" && quantity > 0 && price != "" && product != ""){
 
         subtotal[counter] = (quantity * price);
-        total = total + subtotal;
+        total = total + subtotal[counter];
 
-        var tabrow = '<tr class="selected" id="tabrow'+counter+'"><td><button type="button" class="btn btn-warning" onclick="deletetab('+counter+');"><i class="fa fa-times-circle-o"></i></button></td><td><input type="hidden" name="product[]" value"'+idproduct+'" class="form-control" readonly>'+product+'</td><td><input type="text" name="lot[]" value="'+lot+                    '" class="form-control" readonly></td><td><input type="number" name="quantity[]" value="'+quantity+'" class="form-control" readonly></td><td><input type="number" name="price[]" value="'+price+'" class="form-control" readonly></td><td>'+subtotal[counter].toFixed(2)+'</td></tr>';
+        var tabrow = '<tr class="selected" id="tabrow'+counter+
+            '"><td><button type="button" class="btn btn-warning" onclick="deletetab('+counter+
+            ');"><i class="fa fa-times-circle-o"></i></button></td><td><input type="hidden" name="productid[]" value="'+idproduct+
+            '" class="form-control" readonly>'+product+'</td><td><input type="text" name="lot[]" value="'+lot+
+            '" class="form-control" readonly></td><td><input type="number" name="quantity[]" value="'+quantity+
+            '" class="form-control" readonly></td><td><input type="number" name="price[]" value="'+price+
+            '" class="form-control" readonly></td><td><input type="hidden" name="expiredate[] value="'+expiredate+
+            '" classc="form-control" readonly>'+subtotal[counter].toFixed(2)+'</td></tr>';
 
         counter++;
         cleantab();
 
-        $("#total").html("S/. " + total);
+        $("#total").html("S/. " + (total).toFixed(2));
+        //document.getElementById("total").innerHTML=(total).toFixed(2);
+
         evaluate();
-        $("#details").append(tabrow);
+        $('#details').append(tabrow);
     }
     else{
         alert("Error al ingresar datos. Por favor, revise los datos del producto.");
@@ -91,8 +102,11 @@ function addelement(){
 }
 
 function cleantab(){
-    $("#quantity").val("");
-    $("#price").val("");
+    //alert('funca');
+    $("#iquantity").val("");
+    $("#iunitprice").val("");
+    $("#expiredate").val("");
+    $("#inslot").val("");
 }
 
 function evaluate(){
@@ -106,7 +120,7 @@ function evaluate(){
 
 function deletetab(index){
     total = total - subtotal[index];
-    $("#total").html("S/. " + total);
+    $("#total").html("S/. " + (total).toFixed(2));
     $('#tabrow' + index).remove();
     evaluate();
 }

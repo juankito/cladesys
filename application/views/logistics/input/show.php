@@ -42,15 +42,20 @@
                                     <?= $input[0]->ticket; ?> - <?= $input[0]->ticketnumber; ?> 
                                 </li>
                                 <li><strong>Estado :</strong> 
-                                    <?php if($input[0]->status == 1): ?>
+                                    <?php if($input[0]->status == 2): ?>
                                         <span class="label label-primary uppercase">
                                             Aceptado
+                                        </span>
+                                    <?php elseif ($input[0]->status == 1): ?>
+                                        <span class="label label-warning uppercase">
+                                            En espera
                                         </span>
                                     <?php else: ?>
                                         <span class="label label-danger uppercase">
                                             Cancelado
                                         </span>
                                     <?php endif; ?>
+                                    <input type="hidden" id="status" value="<?= $input[0]->status; ?>">
                                 </li>
                             </ul>
                         </div>
@@ -118,9 +123,113 @@
                                     <i class="fa fa-print"></i>
                             </a>
                         </div>
+                        <div class="form-actions right" id="validate">
+                            <button type="button" class="btn default" id="icancel" onclick="cancelshop('<?= $input[0]->id; ?>');">
+                                <i class="fa fa-times-circle-o"></i>Cancelar Compra
+                            </button>
+                            <button type="button" class="btn green" id="iapprove" onclick="approveshop('<?= $input[0]->id; ?>');">
+                                <i class="fa fa-save"></i> Aprobar Compra
+                            </button>
+                        </div>  
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+$(document).ready(function() {
+    
+    $("#validate").hide();
+
+    evaluate();
+});
+
+function evaluate(){
+    status   = $("#status").val();
+    //alert('status: '+status);
+    if(status == 1){
+        $("#validate").show();
+    }
+    else {
+        $("#validate").hide();
+    }
+}
+
+function approveshop(id){
+    swal({
+        title: '¿Aprobará la compra Nº '+id+'?',
+        text: "No se podrán revertir los cambios",
+        type: 'question',
+        showCancelButton: true,
+        showLoaderOnConfirm: true,
+        allwoOutsideClick: false,
+        confirmButtonText: 'Sí, Aprobar',
+        cancelButtonText: 'No, Regresar'
+    }).then(function(){
+        $.post("<?= site_url(); ?>"+'logistics/input/approve/'+id, function(data){
+            redirect('logistics/input');
+
+            if(data == id){
+                swal({
+                    title: 'Se aprobó la compra.',
+                    type: 'success',
+                    html: 'La compra Nº '+data+' ahora está en stock.',
+                    timer: 5000
+                }).catch(swal.noop)
+            }
+            else{
+                swal({
+                    title: '¡Error!',
+                    type: 'error',
+                    html: data
+                }).catch(swal.noop)
+            }
+        })
+    })
+}
+
+function cancelshop(id){
+    swal({
+        title: '¿Cancelará la compra Nº '+id+'?',
+        text: "No se podrán revertir los cambios",
+        type: 'question',
+        showCancelButton: true,
+        showLoaderOnConfirm: true,
+        allwoOutsideClick: false,
+        confirmButtonText: 'Sí, Cancelar',
+        cancelButtonText: 'No, Regresar'
+    }).then(function(){
+        $.post("<?= site_url(); ?>"+'logistics/input/cancel/'+id, function(data){
+            redirect('logistics/input');
+
+            if(data == 1){
+                swal({
+                    title: 'Se canceló la compra.',
+                    type: 'warning',
+                    html: 'La compra Nº '+data+' se ha cancelado.',
+                    timer: 5000
+                }).catch(swal.noop)
+            }
+            else{
+                swal({
+                    title: '¡Error!',
+                    type: 'error',
+                    html: data
+                }).catch(swal.noop)
+            }
+        })
+    }, function(dismiss) {
+        if(dismiss === 'cancel'){
+            swal({
+                title: 'Atención',
+                text: 'No se realizó ningun cambio',
+                type: 'info',
+                timer: 3000
+            }).catch(swal.noop)
+        }
+    })
+
+}
+
+</script>

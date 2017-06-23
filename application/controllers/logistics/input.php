@@ -187,7 +187,7 @@ class Input extends CI_Controller {
 			'date'			=> $this->input->post('regdate')
 			);
 
-		$productid = $this->input->post('product');
+		$productid = $this->input->post('productid');
 		$unitprice = $this->input->post('price');
 		$quantity = $this->input->post('quantity');
 		$fabdate = $this->input->post('fabdate');
@@ -196,17 +196,18 @@ class Input extends CI_Controller {
 
 		try {
 			$this->db->trans_begin();
+			$this->inputmodel->insert('input', $input);
+			$inputid = $this->db->insert_id();
 
-			$this->db->insert('input', $input);
 			for($i = 0; $i < count($productid); $i++){
 
 				$inputdetail = array();
-				$inputdetail = array('id' => $inputid[0]->id) + $inputdetail;
+				$inputdetail = array('inputid' => $inputid) + $inputdetail;
 				$inputdetail['productid'] = $productid[$i];
 				$inputdetail['unitprice'] = $unitprice[$i];
 				$inputdetail['quantity'] = $quantity[$i];
 				$inputdetail['fabdate'] = $fabdate[$i];
-				$inputdetail['expiredate'] = $expiredate[$i];
+				$inputdetail['expiredate'] = ($expiredate[$i] == '')? NULL : $expiredate[$i];
 				$inputdetail['lot']	= $lot[$i];
 
 				$this->inputmodel->insert('inputdetail', $inputdetail);
@@ -217,12 +218,61 @@ class Input extends CI_Controller {
 			}
 			else{
 				$this->db->trans_commit();
-				echo $inputid[0]->id;
+				echo $inputid;
 			}
 		} catch (Exception $e) {
 			$this->db->trans_rollback();
 			echo $e->getMessage();
 		}
+	}
+
+	public function approve($id){
+		$select = array(
+			'id' 		=> 'inputdetail.id',
+			'quantity' 	=> 'inputdetail.quantity',
+			);
+		$from = array('table' => 'inputdetail');
+		$where = array('inputdetail.inputid' => $id);
+
+		$inputs = $this->inputmodel->get_items($select, $from, false, $where, false);
+
+		try{
+			$this->db->trans_begin();
+			
+			for($i = 0; $i< count($inputs); $i++){
+				$stocks = array();
+				$stocks['locationid'] 	= 1;
+				$stocks['inputdetailid'] = $inputs[$i]->id;
+				$stocks['quantity'] 	= $inputs[$i]->quantity;
+
+				$this->inputmodel->insert('stock',$stocks);
+			}
+
+			if($this->db->trans_status() == FALSE){
+				throw new Exception('Error al ingresar. Por favor vuelva a intentar.');
+			}
+			else{
+				$this->db->trans_commit();
+				echo $id;
+			}
+
+			$where1 = array('input.id' => $id);
+			$status = array('input.status' => 2);
+			$this->inputmodel->update('input', $where1, $status);
+
+		} catch (Exception $e){
+			$this->db->trans_rollback();
+			echo $e->getMessage();
+		}
+	}
+
+	public function cancel($id){
+		$where = array('input.id' => $id);
+		$data = array('input.status' => 0);
+
+		$result = $this->inputmodel->update('input', $where, $data);
+
+		echo $result;
 	}
 }
 
