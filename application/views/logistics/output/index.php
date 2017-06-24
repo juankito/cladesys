@@ -46,29 +46,71 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="item in lista">
-                                    <td>{{item.id}} </td>
-                                    <td>{{item.ticketName}} </td>
-                                    <td>{{item.storageNameOut}} </td>
-                                    <td>{{item.storageNameIn}} </td>
-                                    <td>{{item.added_at}} </td>
-                                    <td>
-                                        <router-link :to="'/details/' + item.id">
-                                            <button class="btn dark btn-outline">
-                                                <i class="fa fa-eye" aria-hidden="true"></i>
-                                            </button>
-                                        </router-link>
-                                        <a @click="deleteOutput(item.id)">
-                                            <button class="btn btn-warning" title="Eliminar">
-                                                <i class="fa fa-trash" aria-hidden="true"></i>
-                                            </button>
-                                        </a>
-                                    </td>
-                                </tr>
+                                <template  v-for="item in lista">
+                                    <template v-if="item.status == 1">
+                                        <tr>
+                                            <td>{{item.id}} </td>
+                                            <td>{{item.ticketName}} </td>
+                                            <td>{{item.storageNameOut}} </td>
+                                            <td>{{item.storageNameIn}} </td>
+                                            <td>{{item.added_at}} </td>
+                                            <td>
+                                                <router-link :to="'/detail/' + item.id">
+                                                    <button class="btn dark btn-outline">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                    </button>
+                                                </router-link>
+                                                <a @click="deleteOutput(item.id)">
+                                                    <button class="btn btn-warning" title="Eliminar">
+                                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                                    </button>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </template>
+                                
                             </tbody>
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</template>
+<template id="output_detail">
+    <div>
+        
+        <div class="panel panel-default">
+            <div class="panel-body">
+               <div v-for="(item, key, index) in datos.cabecera">
+                   <strong>{{key}}: </strong> {{item}}
+               </div>
+               <hr>
+               <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(od, index) in datos.detalles">
+                            <td>{{index+1}} </td>
+                            <td>{{od.detail}} </td>
+                            <td class="text-right">{{od.quantity}} </td>
+                            <td class="text-right">{{od.unitprice}} </td>
+                            <td class="text-right">{{od.quantity * od.unitPrice}} </td>
+                        </tr>
+                        <tr>
+                            <th class="text-right" colspan="4">Total</th>
+                            <th class="text-right">{{getOutputTotal}} </th>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -124,7 +166,7 @@
                                 <h3 class="form-section">Detalles de Salida</h3>
                                 <div class="row">
                                     <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                                        <a class="btn btn-primary" data-toggle="modal" href='#modal-id'>Agregar Detalle</a>
+                                        <a class="btn btn-primary" data-toggle="modal" href='#modal-id'><i class="fa fa-plus"></i> Agregar Detalle</a>
                                         <hr>
                                         <div class="modal fade" id="modal-id">
                                             <div class="modal-dialog">
@@ -153,7 +195,7 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                                                        <button @click="agregarOutput" class="btn btn-primary">Guardar</button>
+                                                        <button @click="agregarOutput" class="btn btn-primary" data-dismiss="modal">Guardar</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -166,6 +208,7 @@
                                                     <th>Cantidad</th>
                                                     <th>Precio Unitario</th>
                                                     <th>Subtotal</th>
+                                                    <th></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -175,6 +218,14 @@
                                                     <td class="text-right">{{od.quantity}} </td>
                                                     <td class="text-right">{{od.unitPrice}} </td>
                                                     <td class="text-right">{{od.quantity * od.unitPrice}} </td>
+                                                    <td>
+                                                        <!--<button @click="outputNew = od" class="btn btn-warning" title="Editar" data-toggle="modal" href='#modal-id'>
+                                                            <i class="fa fa-edit"></i> 
+                                                        </button>-->
+                                                        <button @click="outputdetail.splice(index, 1)" class="btn btn-danger" title="Eliminar">
+                                                            <i class="fa fa-trash"></i> 
+                                                        </button>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <th class="text-right" colspan="4">Total</th>
